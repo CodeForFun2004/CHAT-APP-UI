@@ -1,26 +1,39 @@
 // 📁 src/pages/FriendsPage.jsx
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Container, Row, Col, Card, Button, Carousel } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import axios from '../api/axios';
+import SuggestList from '../components/SuggestList';
+import FriendsList from '../components/FriendsList';
 
 const FriendsPage = () => {
-  const user = useSelector((state) => state.auth.user) || JSON.parse(localStorage.getItem('user'));
-  const userId = user?._id;
+  const rawUser = useSelector((state) => state.auth.user);
+
+  let storedUser = null;
+  const storedRaw = localStorage.getItem('user');
+  if (storedRaw) {
+    try {
+      storedUser = JSON.parse(storedRaw);
+    } catch (e) {
+      console.warn('⚠️ Failed to parse user from localStorage:', e);
+    }
+  }
+
+  const user = rawUser || storedUser;
+  const userId = user && (user._id || user.id);
 
   const [suggestedFriends, setSuggestedFriends] = useState([]);
   const [friends, setFriends] = useState([]);
 
   useEffect(() => {
     const fetchFriends = async () => {
-      try {
-        if (!userId) {
-          console.warn('⚠️ userId is missing');
-          return;
-        }
+      if (!userId) return;
 
-        const res1 = await axios.get(`/users/${userId}/suggestions`);
-        const res2 = await axios.get(`/users/${userId}/friends`);
+      try {
+        const [res1, res2] = await Promise.all([
+          axios.get(`/users/${userId}/suggestions`),
+          axios.get(`/users/${userId}/friends`)
+        ]);
 
         const grouped = [];
         for (let i = 0; i < res1.data.length; i += 3) {
@@ -39,45 +52,8 @@ const FriendsPage = () => {
 
   return (
     <Container className="mt-4">
-      <h2 className="mb-4">Gợi ý kết bạn</h2>
-      <Carousel indicators={false} interval={null} className="mb-5">
-        {suggestedFriends.map((group, index) => (
-          <Carousel.Item key={index}>
-            <Row>
-              {group.map((user) => (
-                <Col key={user._id} md={4}>
-                  <Card className="mb-3">
-                    <Card.Img variant="top" src={user.avatar || '/default-avatar.png'} />
-                    <Card.Body>
-                      <Card.Title>{user.username}</Card.Title>
-                      <Card.Text>{user.email}</Card.Text>
-                      <Button variant="primary">Kết bạn</Button>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-          </Carousel.Item>
-        ))}
-      </Carousel>
-
-      <h3>Danh sách bạn bè</h3>
-      <Row>
-        {friends.length === 0 ? (
-          <Col><p>Chưa có bạn bè nào.</p></Col>
-        ) : (
-          friends.map(friend => (
-            <Col key={friend._id} md={3}>
-              <Card className="mb-3">
-                <Card.Img variant="top" src={friend.avatar || '/default-avatar.png'} />
-                <Card.Body>
-                  <Card.Title>{friend.username}</Card.Title>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))
-        )}
-      </Row>
+      <SuggestList suggestedFriends={suggestedFriends} />
+      <FriendsList friends={friends} />
     </Container>
   );
 };

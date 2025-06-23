@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import FriendsPage from './pages/FriendsPage';
-import ChannelsPage from './pages/ChannelsPage';
+
 import NotFound from './pages/NotFound';
 import AppNavbar from './components/Navbar';
 import { setCredentials } from './redux/slices/authSlice';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
+import ChatRoomPage from './pages/ChatRoomPage';
+import ChatRoom from './pages/ChatRoom';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -38,11 +40,12 @@ const App = () => {
             <FriendsPage />
           </PrivateRoute>
         } />
-        <Route path="/channels" element={
+        {/* <Route path="/channels" element={
           <PrivateRoute>
-            <ChannelsPage />
+            <ChatRoom/>
           </PrivateRoute>
-        } />
+        } /> */}
+        <Route path="/channels/chat/:channelId" element={<ChatRoom />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>
