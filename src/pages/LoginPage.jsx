@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser } from '../redux/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { Container, Form, Button, Card, Row, Col } from 'react-bootstrap';
+import { loginUser } from '../redux/slices/authSlice';
 
 const LoginPage = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
@@ -18,30 +19,53 @@ const LoginPage = () => {
     }
   };
 
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://localhost:3000/api/auth/google';
+  };
+
   return (
-    <div className="container mt-4">
-      <h3>Đăng nhập</h3>
-      {error && <p className="text-danger">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={usernameOrEmail}
-          onChange={(e) => setUsernameOrEmail(e.target.value)}
-          placeholder="Username hoặc Email"
-          className="form-control mb-2"
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Mật khẩu"
-          className="form-control mb-3"
-        />
-        <button type="submit" className="btn btn-primary" disabled={loading}>
-          {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-        </button>
-      </form>
-    </div>
+    <Container className="d-flex justify-content-center align-items-center vh-100">
+      <Card className="shadow p-4" style={{ width: '100%', maxWidth: '400px' }}>
+        <Card.Body>
+          <h3 className="text-center mb-4">Đăng nhập</h3>
+          {error && <p className="text-danger text-center">{error}</p>}
+
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3">
+              <Form.Label>Username hoặc Email</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Nhập username hoặc email"
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label>Mật khẩu</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Nhập mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Button type="submit" variant="primary" className="w-100 mb-3" disabled={loading}>
+              {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            </Button>
+
+            <div className="text-center text-muted mb-2">hoặc</div>
+
+            <Button variant="danger" className="w-100" onClick={handleGoogleLogin}>
+              Đăng nhập với Google
+            </Button>
+          </Form>
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

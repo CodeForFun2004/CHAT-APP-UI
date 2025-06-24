@@ -11,8 +11,9 @@ import AppNavbar from './components/Navbar';
 import { setCredentials } from './redux/slices/authSlice';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
-import ChatRoomPage from './pages/ChatRoomPage';
 import ChatRoom from './pages/ChatRoom';
+import Footer from './components/Footer';
+import ChannelsPage from './pages/ChannelsPage';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -30,8 +31,9 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <>
+    <div className="d-flex flex-column min-vh-100">
       <AppNavbar />
+      <div className="flex-grow-1 " >
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={!accessToken ? <LoginPage /> : <Navigate to="/" />} />
@@ -40,15 +42,17 @@ const App = () => {
             <FriendsPage />
           </PrivateRoute>
         } />
-        {/* <Route path="/channels" element={
+        <Route path="/channels" element={
           <PrivateRoute>
-            <ChatRoom/>
+            <ChannelsPage/>
           </PrivateRoute>
-        } /> */}
+        } />
         <Route path="/channels/chat/:channelId" element={<ChatRoom />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+      </div>
+      <Footer/>
+    </div>
   );
 };
 

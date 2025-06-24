@@ -1,52 +1,61 @@
-// src/pages/ChannelsPage.jsx
 import React, { useEffect } from 'react';
+import { Container, Card, Button, Row, Col, Image } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserChannels, setCurrentChannel } from '../redux/slices/channelSlice';
-import { useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { fetchUserChannels } from '../redux/slices/channelSlice';
 
 const ChannelsPage = () => {
   const dispatch = useDispatch();
-  const { accessToken, user } = useSelector((state) => state.auth);
-  const { channels, currentChannel } = useSelector((state) => state.channel);
-  const { friendId } = useParams();
+  const channels = useSelector(state => state.channel.channels);
+  const currentUserId = useSelector(state => state.auth.user?.id);
 
   useEffect(() => {
-    if (user?._id) {
-      dispatch(fetchUserChannels(user._id));
-    }
-  }, [dispatch, user]);
+    dispatch(fetchUserChannels(currentUserId));
+  }, [dispatch, currentUserId]);
 
-  useEffect(() => {
-    if (channels.length > 0 && friendId) {
-      const matched = channels.find(ch =>
-        ch.members.includes(friendId)
-      );
-      if (matched) {
-        dispatch(setCurrentChannel(matched));
-      }
-    }
-  }, [channels, friendId, dispatch]);
+  const getFriendFromChannel = (members) => {
+    return members.find(member => member._id !== currentUserId);
+  };
 
   return (
-    <div className="container py-4">
-      <h2>Kênh của bạn</h2>
-      <ul>
-        {channels.map((ch) => (
-          <li key={ch._id} style={{ fontWeight: ch._id === currentChannel?._id ? 'bold' : 'normal' }}>
-            {ch.members.filter(id => id !== user._id).join(', ')}
-          </li>
-        ))}
-      </ul>
+    <Container className="mt-4">
+      <h2 className="mb-4">Your Chat Rooms</h2>
+      <Row>
+        {channels.map(channel => {
+          const friend = getFriendFromChannel(channel.members);
 
-      {currentChannel ? (
-        <div className="mt-4">
-          <h4>Đang chat trong kênh:</h4>
-          <pre>{JSON.stringify(currentChannel, null, 2)}</pre>
-        </div>
-      ) : (
-        <p>Chưa chọn kênh nào.</p>
-      )}
-    </div>
+          return (
+            <Col md={4} key={channel._id} className="mb-4">
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <div className="d-flex align-items-center">
+                    <Image
+                      src={friend?.avatar || '../assets/images/default-avatar.png'}
+                      roundedCircle
+                      width={50}
+                      height={50}
+                      className="me-3"
+                      onError={(e) => e.target.src = '../assets/images/default-avatar.png'}
+                    />
+                    <div>
+                      <Card.Title>{friend?.username || 'Unknown User'}</Card.Title>
+                      <Card.Text className="text-muted">
+                      Created: {new Date(channel.createdAt).toLocaleDateString()}
+                      </Card.Text>
+                    </div>
+                  </div>
+                  <Link to={`/channels/chat/${channel._id}`}>
+                    <Button variant="primary" className="mt-3 w-100">
+                      Enter the Chat
+                    </Button>
+                  </Link>
+                </Card.Body>
+              </Card>
+            </Col>
+          );
+        })}
+      </Row>
+    </Container>
   );
 };
 
