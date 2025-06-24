@@ -78,7 +78,7 @@ const ChatRoom = () => {
   };
 
   return (
-    <Container>
+    <Container >
       {/* 🎯 Tiêu đề phòng chat */}
       <div className="d-flex align-items-center gap-2 mb-3">
         {friendInfo && (
@@ -93,18 +93,28 @@ const ChatRoom = () => {
       </div>
 
       {/* 💬 Vùng hiển thị tin nhắn */}
-      <div style={{ height: '400px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px', borderRadius: '8px' }}>
+      <div
+  className="chat-box"
+  style={{
+    height: '400px',
+    maxHeight: '400px', // thêm maxHeight để đảm bảo không phát triển vượt khung
+    overflowY: 'auto',
+    border: '1px solid #ccc',
+    padding: '10px',
+    borderRadius: '8px',
+  }}
+>
         {messages.map(msg => {
           const senderId = typeof msg.sender === 'object' ? msg.sender._id : msg.sender;
           const isOwnMessage = senderId === currentUserId;
-          const avatar = msg.sender?.avatar || '/default-avatar.png';
+          // const avatar = msg.sender?.avatar || '/default-avatar.png';
 
           return (
             <div key={msg._id || Math.random()} className="d-flex mb-2"
               style={{ justifyContent: isOwnMessage ? 'flex-end' : 'flex-start' }}>
-              {!isOwnMessage && (
+              {/* {!isOwnMessage && (
                 <Image src={avatar} roundedCircle width={32} height={32} className="me-2" />
-              )}
+              )} */}
               <div style={{
                 padding: '10px',
                 borderRadius: '15px',
