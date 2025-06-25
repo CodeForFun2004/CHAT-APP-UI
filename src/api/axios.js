@@ -2,7 +2,7 @@ import axios from 'axios';
 import { store } from '../redux/store'; // ✅ import đúng kiểu named
 import { logout, setAccessToken } from '../redux/slices/authSlice';
 
-export const BASE_URL = 'https://chat-app-api-unyl.onrender.com';
+export const BASE_URL = 'https://chat-app-api-gbbm.onrender.com';
 
 const instance = axios.create({
   // baseURL: 'http://localhost:3000/api',
