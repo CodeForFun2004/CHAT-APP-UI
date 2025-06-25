@@ -6,7 +6,7 @@ export const BASE_URL = 'https://chat-app-api-gbbm.onrender.com';
 
 const instance = axios.create({
   // baseURL: 'http://localhost:3000/api',
-  baseURL: BASE_URL,
+  baseURL: `${BASE_URL}/api`,
   headers: { 'Content-Type': 'application/json' },
 });
 
