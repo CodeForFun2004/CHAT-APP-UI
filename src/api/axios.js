@@ -2,8 +2,11 @@ import axios from 'axios';
 import { store } from '../redux/store'; // ✅ import đúng kiểu named
 import { logout, setAccessToken } from '../redux/slices/authSlice';
 
+export const BASE_URL = 'https://chat-app-api-unyl.onrender.com';
+
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  // baseURL: 'http://localhost:3000/api',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -28,7 +31,8 @@ instance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('refreshToken');
-        const res = await axios.post('http://localhost:3000/api/auth/refresh', { refreshToken });
+    //    const res = await axios.post('http://localhost:3000/api/auth/refresh', { refreshToken });
+        const res = await axios.post(`${BASE_URL}/api/auth/refresh`, { refreshToken });
         const newAccessToken = res.data.accessToken;
 
         // Cập nhật store + localStorage
