@@ -20,7 +20,9 @@ const LoginPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = 'http://localhost:3000/api/auth/google';
+    // window.location.href = 'http://localhost:3000/api/auth/google';
+    window.location.href = 'https://chat-app-api-gbbm.onrender.com/api/auth/google';
+
   };
 
   return (
